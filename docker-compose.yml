@@ -1,0 +1,49 @@
+version: '3.0'
+
+services:
+
+  web:
+    image: web_service
+    ports:
+      - "4200:4200"
+    depends_on:
+      - mongodb
+      - postgres
+
+
+  auth_service:
+    image: user_auth_service
+    ports:
+      - "3000:3000"
+
+  route_service:
+    image: route_service
+    ports:
+      - "2000:2000"
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: postgres
+
+
+  mongodb:
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+    ports:
+      - '27017:27017'
+
+  nginx:
+    image: nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf # Mounten Sie Ihre Nginx-Konfiguration
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - web
+
